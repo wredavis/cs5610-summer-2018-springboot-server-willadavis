@@ -56,10 +56,10 @@
     }
     
     function createUser() {
-        var username = $usernameFld.val();
-        var password = $passwordFld.val();
-        var firstName = $firstNameFld.val();
-        var lastName = $lastNameFld.val();
+        var username = $('#usernameFld').val();
+        var password = $('#passwordFld').val();
+        var firstName = $('#firstNameFld').val();
+        var lastName = $('#lastNameFld').val();
         var role = $('#roleFld').val();
 
         var user = {
@@ -73,8 +73,16 @@
         userService.createUser(user).then(findAllUsers);
     }
 
-    function editUser() {
-
+    function editUser(event) {
+    	$editBtn = $(event.currentTarget);
+    	var userId = $editBtn
+    		.parent()
+    		.parent()
+    		.parent()
+    		.attr('id');
+    	userService
+    		.findUserById(userId)
+    		.then(renderUser);
     }
 
     function deleteUser(event) {
@@ -89,17 +97,50 @@
             .then(findAllUsers);
     }
 
-
-
     function renderUser(user) {
+        document.getElementById("usernameFld").value = user.username;
+        document.getElementById("passwordFld").value = user.password;
+        document.getElementById("firstNameFld").value = user.firstName;
+        document.getElementById("lastNameFld").value = user.lastName;
+        document.getElementById("roleFld").value = user.role;
+        
+        console.log(user);
 
+        $updateBtn = $('#update');
+        $updateBtn.click(function() {
+            $usernameFld = $('#usernameFld').val();
+            $passwordFld = $('#passwordFld').val();
+            $firstNameFld = $('#firstNameFld').val();
+            $lastNameFld = $('#lastNameFld').val();
+            $roleFld = $('#roleFld').val();
+
+            var new_user = {
+                username: $usernameFld,
+                password: $passwordFld,
+                firstName: $firstNameFld,
+                lastName: $lastNameFld,
+                role: $roleFld
+            };
+
+            userService
+                .updateUser(user.id, new_user)
+                .then(findAllUsers);
+
+            $('#usernameFld').val("");
+            $('#passwordFld').val("");
+            $('#firstNameFld').val("");
+            $('#lastNameFld').val("");
+            $('#roleFld').val("");
+        });
     }
 
 
     function updateUser(event) {
+    	
     }
 
     function findUserById() {
+    	return userService.findUserById(userId);
     }
 
 }());

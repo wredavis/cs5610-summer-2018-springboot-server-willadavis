@@ -34,19 +34,34 @@ public class UserService {
 		return userRepository.findById(id).get();
 	}
 
-//	@GetMapping("/api/user")
-//	public User findUserByUsername(@RequestBody String username) {
-//		return userRepository.findUserByUsername(username);
+	@GetMapping("/api/users/{username}")
+	public User findUserByUsername(@RequestBody String username) {
+		return userRepository.findUserByUsername(username);
+	}
+
+//	@PutMapping("/api/user/{userId}")
+//	public User updateUser(@PathVariable("userId") int id, @RequestBody User newUser) {
 //
+//		User user = userRepository.findById(id).get();
+//		user.set(newUser);
+//
+//		return userRepository.save(user);
 //	}
-
-	@PutMapping("/api/user/{userId}")
-	public User updateUser(@PathVariable("userId") int id, @RequestBody User newUser) {
-
-		User user = userRepository.findById(id).get();
-		user.set(newUser);
-
-		return userRepository.save(user);
+	
+	@PutMapping("/api/user{userId}")
+	public User updateUser(@PathVariable("userId") int userId, @RequestBody User newUser) {
+		Optional<User> data = userRepository.findById(userId);
+		if (data.isPresent()) {
+			User user = data.get();
+			user.setFirstName(newUser.getFirstName());
+			user.setLastName(newUser.getLastName());
+			user.setEmail(newUser.getEmail());
+			user.setRole(newUser.getRole());
+			user.setPhone(newUser.getPhone());
+			userRepository.save(user);
+			return user;
+		}
+		else return null;
 	}
 
 	@DeleteMapping("/api/user/{userId}")
@@ -56,7 +71,7 @@ public class UserService {
 
 	@PostMapping("/api/register")
 	public User register(@RequestBody User user, HttpSession session) {
-		return userRepository.save(user);
+		return createUser(user);
 	}
 
 //	@PostMapping("/api/login")
@@ -70,6 +85,11 @@ public class UserService {
 //		return user;
 //	}
 
+	@PostMapping("/api/login")
+	public User login(@RequestBody User user) {
+		return userRepository.findUserByUsernameAndPassword(user.getUsername(), user.getPassword());
+	}
+	
 	@PutMapping("/api/profile")
 	public User updateProfile(@RequestBody User user, HttpSession session) {
 		User currentUser = (User) session.getAttribute("Current User");
@@ -89,14 +109,11 @@ public class UserService {
 
 			return currentUser;
 		}
+	}
 
-
-		//	@PostMapping("/api/logout")
-		//	public User login(HttpSession session) {
-		//		session.removeAttribute("Current User");
-		//	}
-
-
-
+	@PostMapping("/api/logout")
+	public void logout(HttpSession session) {
+	session.removeAttribute("Current User");
 	}
 }
+

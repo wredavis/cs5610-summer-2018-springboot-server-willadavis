@@ -5,7 +5,10 @@ function UserServiceClient() {
     this.deleteUser = deleteUser;
     this.updateUser = updateUser;
     this.register = register;
+    this.updateUser = updateUser;
     this.login = login;
+    
+    this.loginUrl = 'http://localhost:8080/api/login';
     this.url = 'http://localhost:8080/api/user';
     var self = this;
 
@@ -47,14 +50,24 @@ function UserServiceClient() {
     	   );
     	}
 
+//    function login(user) {
+//        return fetch('http://localhost:8080/api/login', {
+//            method: 'post',
+//            body: JSON.stringify(user),
+//            headers: {
+//                'content-type': 'application/json'
+//            }
+//        });
+//    }
+    
     function login(user) {
-        return fetch('http://localhost:8080/api/login', {
-            method: 'post',
-            body: JSON.stringify(user),
-            headers: {
-                'content-type': 'application/json'
-            }
-        });
+    	return fetch(self.loginUrl, {
+    		method: 'post',
+    		body: JSON.stringify({username:username, password:password}),
+    		headers: {
+    			'content-type': 'application/json'
+    		}
+    	})
     }
 
     function register(user) {
